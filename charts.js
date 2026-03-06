@@ -1,629 +1,262 @@
-// ========================================
-// Charts Configuration and Initialization
-// ========================================
+/* ===== Chart.js Global Config ===== */
+Chart.defaults.color = '#6b7280';
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.plugins.legend.labels.padding = 14;
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.pointStyleWidth = 10;
+Chart.defaults.plugins.tooltip.padding = 10;
+Chart.defaults.plugins.tooltip.cornerRadius = 6;
+Chart.defaults.plugins.tooltip.titleFont = { weight: '600' };
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Chart.js default configuration
-    Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
-    Chart.defaults.font.size = 14;
-    Chart.defaults.color = '#2c3e50';
+const C = {
+    cli: '#16a34a',
+    gui: '#dc2626',
+    cliBg: 'rgba(22,163,74,0.12)',
+    guiBg: 'rgba(220,38,38,0.12)',
+    blue: '#2563eb',
+    purple: '#7c3aed',
+    orange: '#ea580c',
+    yellow: '#ca8a04',
+    cyan: '#0891b2',
+    pink: '#db2777',
+    grid: 'rgba(107,114,128,0.1)'
+};
 
-    // Color scheme
-    const colors = {
-        cli: '#2ecc71',
-        gui: '#e74c3c',
-        cliRgba: 'rgba(46, 204, 113, 0.8)',
-        guiRgba: 'rgba(231, 76, 60, 0.8)',
-        primary: '#4a90e2',
-        secondary: '#50c878',
-        purple: '#9b59b6',
-        yellow: '#f39c12',
-        orange: '#e67e22'
-    };
+const gridOpts = { color: C.grid, drawBorder: false };
+const noGrid = { display: false };
 
-    // ========================================
-    // Performance Comparison Chart
-    // ========================================
-
-    const performanceCtx = document.getElementById('performanceChart');
-    if (performanceCtx) {
-        new Chart(performanceCtx, {
-            type: 'bar',
-            data: {
-                labels: [
-                    'Стартиране на ОС',
-                    'Копиране на файлове (1GB)',
-                    'Инсталиране на софтуер',
-                    'Търсене на файлове',
-                    'Създаване на 1000 файла',
-                    'Системна актуализация'
-                ],
-                datasets: [{
-                    label: 'CLI (секунди)',
-                    data: [15, 8, 45, 2, 5, 120],
-                    backgroundColor: colors.cliRgba,
-                    borderColor: colors.cli,
-                    borderWidth: 2
-                }, {
-                    label: 'GUI (секунди)',
-                    data: [35, 28, 180, 15, 25, 300],
-                    backgroundColor: colors.guiRgba,
-                    borderColor: colors.gui,
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': ' + context.parsed.y + ' сек.';
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Време (секунди)'
-                        }
-                    }
-                }
-            }
-        });
+/* ---- 1. Performance (Bar) ---- */
+new Chart(document.getElementById('performanceChart'), {
+    type: 'bar',
+    data: {
+        labels: ['Файлови операции', 'Системна конфигурация', 'Мрежова диагностика', 'Инсталиране на софтуер', 'Мониторинг', 'Управление на услуги'],
+        datasets: [
+            { label: 'CLI (секунди)', data: [2.1, 3.5, 1.8, 4.2, 1.5, 2.0], backgroundColor: C.cli, borderRadius: 4, barPercentage: 0.7 },
+            { label: 'GUI (секунди)', data: [5.8, 8.2, 6.5, 7.8, 4.5, 5.5], backgroundColor: C.gui, borderRadius: 4, barPercentage: 0.7 }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'Секунди' }, grid: gridOpts },
+            x: { grid: noGrid }
+        }
     }
+});
 
-    // ========================================
-    // Resource Usage Chart (Doughnut)
-    // ========================================
-
-    const resourceCtx = document.getElementById('resourceChart');
-    if (resourceCtx) {
-        new Chart(resourceCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['CLI RAM', 'CLI CPU', 'GUI RAM', 'GUI CPU'],
-                datasets: [{
-                    data: [512, 5, 4096, 25],
-                    backgroundColor: [
-                        colors.cliRgba,
-                        'rgba(46, 204, 113, 0.6)',
-                        colors.guiRgba,
-                        'rgba(231, 76, 60, 0.6)'
-                    ],
-                    borderColor: [
-                        colors.cli,
-                        colors.cli,
-                        colors.gui,
-                        colors.gui
-                    ],
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.parsed;
-                                if (label.includes('RAM')) {
-                                    return label + ': ' + value + ' MB';
-                                } else {
-                                    return label + ': ' + value + '%';
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        });
+/* ---- 2. Resource (Doughnut) ---- */
+new Chart(document.getElementById('resourceChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['CLI – Свободна', 'CLI – Заета', 'GUI – Свободна', 'GUI – Заета'],
+        datasets: [{
+            data: [87, 13, 45, 55],
+            backgroundColor: [C.cli, C.cliBg, C.gui, C.guiBg],
+            borderWidth: 2, borderColor: '#fff'
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        cutout: '55%',
+        plugins: {
+            legend: { position: 'bottom', labels: { padding: 12, font: { size: 11 } } },
+            title: { display: true, text: 'RAM употреба (%)', font: { size: 13, weight: '600' } }
+        }
     }
+});
 
-    // ========================================
-    // CPU & Memory Usage Chart
-    // ========================================
-
-    const cpuMemoryCtx = document.getElementById('cpuMemoryChart');
-    if (cpuMemoryCtx) {
-        new Chart(cpuMemoryCtx, {
-            type: 'bar',
-            data: {
-                labels: ['RAM (MB)', 'CPU (%)'],
-                datasets: [{
-                    label: 'CLI',
-                    data: [512, 5],
-                    backgroundColor: colors.cliRgba,
-                    borderColor: colors.cli,
-                    borderWidth: 2
-                }, {
-                    label: 'GUI',
-                    data: [4096, 25],
-                    backgroundColor: colors.guiRgba,
-                    borderColor: colors.gui,
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+/* ---- 3. CPU/Memory (Bar) ---- */
+new Chart(document.getElementById('cpuMemoryChart'), {
+    type: 'bar',
+    data: {
+        labels: ['Idle CPU (%)', 'Активно CPU (%)', 'RAM старт (MB)', 'RAM работа (MB)'],
+        datasets: [
+            { label: 'CLI', data: [1, 15, 256, 512], backgroundColor: C.cli, borderRadius: 4, barPercentage: 0.6 },
+            { label: 'GUI', data: [5, 45, 1024, 2048], backgroundColor: C.gui, borderRadius: 4, barPercentage: 0.6 }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'top' },
+            title: { display: true, text: 'CPU (%) и RAM (MB)', font: { size: 13, weight: '600' } }
+        },
+        scales: {
+            y: { beginAtZero: true, grid: gridOpts },
+            x: { grid: noGrid }
+        }
     }
+});
 
-    // ========================================
-    // User Satisfaction Radar Chart
-    // ========================================
-
-    const satisfactionCtx = document.getElementById('satisfactionChart');
-    if (satisfactionCtx) {
-        new Chart(satisfactionCtx, {
-            type: 'radar',
-            data: {
-                labels: [
-                    'Лесно­та за използване',
-                    'Производителност',
-                    'Възможности за автоматизация',
-                    'Стабилност',
-                    'Визуализация',
-                    'Гъвкавост'
-                ],
-                datasets: [{
-                    label: 'CLI',
-                    data: [4, 10, 10, 9, 3, 10],
-                    backgroundColor: 'rgba(46, 204, 113, 0.2)',
-                    borderColor: colors.cli,
-                    borderWidth: 2,
-                    pointBackgroundColor: colors.cli
-                }, {
-                    label: 'GUI',
-                    data: [9, 6, 4, 7, 10, 6],
-                    backgroundColor: 'rgba(231, 76, 60, 0.2)',
-                    borderColor: colors.gui,
-                    borderWidth: 2,
-                    pointBackgroundColor: colors.gui
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top'
-                    }
-                },
-                scales: {
-                    r: {
-                        beginAtZero: true,
-                        max: 10,
-                        ticks: {
-                            stepSize: 2
-                        }
-                    }
-                }
+/* ---- 4. Satisfaction (Radar) ---- */
+new Chart(document.getElementById('satisfactionChart'), {
+    type: 'radar',
+    data: {
+        labels: ['Лесна навигация', 'Скорост', 'Гъвкавост', 'Автоматизация', 'Визуализация', 'Обучение'],
+        datasets: [
+            { label: 'CLI', data: [4, 9, 9, 10, 3, 4], borderColor: C.cli, backgroundColor: C.cliBg, pointBackgroundColor: C.cli, pointRadius: 4, borderWidth: 2 },
+            { label: 'GUI', data: [9, 5, 5, 3, 9, 9], borderColor: C.gui, backgroundColor: C.guiBg, pointBackgroundColor: C.gui, pointRadius: 4, borderWidth: 2 }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+            r: {
+                beginAtZero: true, max: 10,
+                ticks: { stepSize: 2, backdropColor: 'transparent' },
+                grid: { color: C.grid },
+                angleLines: { color: C.grid },
+                pointLabels: { font: { size: 11 } }
             }
-        });
+        }
     }
+});
 
-    // ========================================
-    // Cost Analysis Chart
-    // ========================================
-
-    const costCtx = document.getElementById('costChart');
-    if (costCtx) {
-        new Chart(costCtx, {
-            type: 'bar',
-            data: {
-                labels: [
-                    'Първоначални разходи',
-                    'Хардуер',
-                    'Софтуерни лицензи',
-                    'Обучение',
-                    'Поддръжка (годишно)',
-                    'Общо (3 години)'
-                ],
-                datasets: [{
-                    label: 'CLI (лв.)',
-                    data: [5000, 3000, 0, 8000, 2000, 17000],
-                    backgroundColor: colors.cliRgba,
-                    borderColor: colors.cli,
-                    borderWidth: 2
-                }, {
-                    label: 'GUI (лв.)',
-                    data: [15000, 12000, 6000, 3000, 4000, 37000],
-                    backgroundColor: colors.guiRgba,
-                    borderColor: colors.gui,
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' лв.';
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Разходи (лева)'
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return value.toLocaleString() + ' лв.';
-                            }
-                        }
-                    }
-                }
-            }
-        });
+/* ---- 5. Cost (Bar) ---- */
+new Chart(document.getElementById('costChart'), {
+    type: 'bar',
+    data: {
+        labels: ['Лицензи', 'Хардуер', 'Обучение', 'Поддръжка (год.)', 'Надграждане'],
+        datasets: [
+            { label: 'CLI (лева)', data: [0, 800, 2000, 500, 200], backgroundColor: C.cli, borderRadius: 4, barPercentage: 0.7 },
+            { label: 'GUI (лева)', data: [2500, 3500, 800, 1500, 1200], backgroundColor: C.gui, borderRadius: 4, barPercentage: 0.7 }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'Лева (BGN)' }, grid: gridOpts },
+            x: { grid: noGrid }
+        }
     }
+});
 
-    // ========================================
-    // Desktop OS Market Share
-    // ========================================
-
-    const desktopOSCtx = document.getElementById('desktopOSChart');
-    if (desktopOSCtx) {
-        new Chart(desktopOSCtx, {
-            type: 'pie',
-            data: {
-                labels: ['Windows (GUI)', 'macOS (GUI)', 'Linux Desktop (GUI)', 'Linux CLI', 'Други'],
-                datasets: [{
-                    data: [70, 18, 8, 2, 2],
-                    backgroundColor: [
-                        '#0078d4',
-                        '#a2aaad',
-                        '#f39c12',
-                        colors.cli,
-                        '#95a5a6'
-                    ],
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Десктоп системи (2026)'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.label + ': ' + context.parsed + '%';
-                            }
-                        }
-                    }
-                }
-            }
-        });
+/* ---- 6. Desktop OS (Pie) ---- */
+new Chart(document.getElementById('desktopOSChart'), {
+    type: 'pie',
+    data: {
+        labels: ['Windows', 'macOS', 'Linux', 'ChromeOS', 'Други'],
+        datasets: [{
+            data: [72, 16, 8, 3, 1],
+            backgroundColor: [C.blue, C.purple, C.cli, C.orange, '#d1d5db'],
+            borderWidth: 2, borderColor: '#fff'
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'bottom', labels: { padding: 10, font: { size: 11 } } },
+            title: { display: true, text: 'Desktop ОС (2026)', font: { size: 13, weight: '600' } }
+        }
     }
+});
 
-    // ========================================
-    // Server OS Market Share
-    // ========================================
-
-    const serverOSCtx = document.getElementById('serverOSChart');
-    if (serverOSCtx) {
-        new Chart(serverOSCtx, {
-            type: 'pie',
-            data: {
-                labels: ['Linux CLI', 'Windows Server (GUI)', 'Unix CLI', 'Други'],
-                datasets: [{
-                    data: [78, 15, 5, 2],
-                    backgroundColor: [
-                        colors.cli,
-                        colors.gui,
-                        colors.purple,
-                        '#95a5a6'
-                    ],
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Сървърни системи (2026)'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.label + ': ' + context.parsed + '%';
-                            }
-                        }
-                    }
-                }
-            }
-        });
+/* ---- 7. Server OS (Pie) ---- */
+new Chart(document.getElementById('serverOSChart'), {
+    type: 'pie',
+    data: {
+        labels: ['Linux', 'Windows Server', 'Unix', 'Други'],
+        datasets: [{
+            data: [78, 18, 3, 1],
+            backgroundColor: [C.cli, C.blue, C.purple, '#d1d5db'],
+            borderWidth: 2, borderColor: '#fff'
+        }]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'bottom', labels: { padding: 10, font: { size: 11 } } },
+            title: { display: true, text: 'Server ОС (2026)', font: { size: 13, weight: '600' } }
+        }
     }
+});
 
-    // ========================================
-    // Security Comparison Chart
-    // ========================================
-
-    const securityCtx = document.getElementById('securityChart');
-    if (securityCtx) {
-        new Chart(securityCtx, {
-            type: 'line',
-            data: {
-                labels: ['Ян', 'Фев', 'Мар', 'Апр', 'Май', 'Юни', 'Юли', 'Авг', 'Сеп', 'Окт', 'Ное', 'Дек'],
-                datasets: [{
-                    label: 'CLI Уязвимости',
-                    data: [2, 1, 3, 2, 1, 2, 1, 2, 1, 3, 2, 1],
-                    borderColor: colors.cli,
-                    backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4
-                }, {
-                    label: 'GUI Уязвимости',
-                    data: [8, 6, 9, 7, 8, 6, 9, 7, 8, 9, 7, 8],
-                    borderColor: colors.gui,
-                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Брой инциденти'
-                        }
-                    }
-                }
-            }
-        });
+/* ---- 8. Security (Line) ---- */
+new Chart(document.getElementById('securityChart'), {
+    type: 'line',
+    data: {
+        labels: ['Яну', 'Фев', 'Мар', 'Апр', 'Май', 'Юни', 'Юли', 'Авг', 'Сеп', 'Окт', 'Ное', 'Дек'],
+        datasets: [
+            { label: 'CLI уязвимости', data: [5, 3, 4, 2, 6, 3, 4, 2, 5, 3, 4, 2], borderColor: C.cli, backgroundColor: C.cliBg, fill: true, tension: 0.35, borderWidth: 2, pointRadius: 3 },
+            { label: 'GUI уязвимости', data: [15, 12, 18, 14, 20, 16, 13, 17, 19, 15, 14, 16], borderColor: C.gui, backgroundColor: C.guiBg, fill: true, tension: 0.35, borderWidth: 2, pointRadius: 3 }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+            y: { beginAtZero: true, title: { display: true, text: 'Брой уязвимости' }, grid: gridOpts },
+            x: { grid: noGrid }
+        }
     }
+});
 
-    // ========================================
-    // Usage Scenarios Chart
-    // ========================================
-
-    const usageCtx = document.getElementById('usageChart');
-    if (usageCtx) {
-        new Chart(usageCtx, {
-            type: 'bar',
-            data: {
-                labels: [
-                    'DevOps',
-                    'Системна администрация',
-                    'Офис работа',
-                    'Дизайн & Мултимедия',
-                    'Разработка',
-                    'Образование'
-                ],
-                datasets: [{
-                    label: 'CLI %',
-                    data: [95, 85, 5, 10, 70, 20],
-                    backgroundColor: colors.cliRgba,
-                    borderColor: colors.cli,
-                    borderWidth: 2
-                }, {
-                    label: 'GUI %',
-                    data: [5, 15, 95, 90, 30, 80],
-                    backgroundColor: colors.guiRgba,
-                    borderColor: colors.gui,
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'y',
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': ' + context.parsed.x + '%';
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        max: 100,
-                        title: {
-                            display: true,
-                            text: 'Процент на използване'
-                        }
-                    }
-                }
-            }
-        });
+/* ---- 9. Usage (Horizontal Bar) ---- */
+new Chart(document.getElementById('usageChart'), {
+    type: 'bar',
+    data: {
+        labels: ['DevOps', 'Системна адм.', 'Уеб разработка', 'Дизайн', 'Офис', 'Наука/данни'],
+        datasets: [
+            { label: 'CLI %', data: [90, 85, 60, 10, 5, 70], backgroundColor: C.cli, borderRadius: 4, barPercentage: 0.65 },
+            { label: 'GUI %', data: [10, 15, 40, 90, 95, 30], backgroundColor: C.gui, borderRadius: 4, barPercentage: 0.65 }
+        ]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+            x: { beginAtZero: true, max: 100, title: { display: true, text: '% предпочитание' }, grid: gridOpts },
+            y: { grid: noGrid }
+        }
     }
+});
 
-    // ========================================
-    // Learning Curve Chart
-    // ========================================
-
-    const learningCtx = document.getElementById('learningChart');
-    if (learningCtx) {
-        new Chart(learningCtx, {
-            type: 'line',
-            data: {
-                labels: ['Седмица 1', 'Седмица 2', 'Седмица 3', 'Седмица 4', 'Седмица 6', 'Седмица 8', 'Седмица 12'],
-                datasets: [{
-                    label: 'CLI Компетентност',
-                    data: [10, 20, 35, 50, 70, 85, 95],
-                    borderColor: colors.cli,
-                    backgroundColor: 'rgba(46, 204, 113, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4
-                }, {
-                    label: 'GUI Компетентност',
-                    data: [40, 60, 75, 85, 90, 95, 98],
-                    borderColor: colors.gui,
-                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        title: {
-                            display: true,
-                            text: 'Ниво на компетентност (%)'
-                        }
-                    }
-                }
-            }
-        });
+/* ---- 10. Learning Curve (Line) ---- */
+new Chart(document.getElementById('learningChart'), {
+    type: 'line',
+    data: {
+        labels: ['Седмица 1', 'Седмица 2', 'Месец 1', 'Месец 3', 'Месец 6', 'Година 1'],
+        datasets: [
+            { label: 'CLI умения', data: [10, 20, 35, 55, 75, 95], borderColor: C.cli, backgroundColor: C.cliBg, fill: true, tension: 0.35, borderWidth: 2, pointRadius: 4 },
+            { label: 'GUI умения', data: [40, 60, 75, 85, 90, 92], borderColor: C.gui, backgroundColor: C.guiBg, fill: true, tension: 0.35, borderWidth: 2, pointRadius: 4 }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+            y: { beginAtZero: true, max: 100, title: { display: true, text: '% компетентност' }, grid: gridOpts },
+            x: { grid: noGrid }
+        }
     }
+});
 
-    // ========================================
-    // Automation Capabilities Chart
-    // ========================================
-
-    const automationCtx = document.getElementById('automationChart');
-    if (automationCtx) {
-        new Chart(automationCtx, {
-            type: 'radar',
-            data: {
-                labels: [
-                    'Пакетна обработка',
-                    'Scripting',
-                    'Scheduling',
-                    'Deployment',
-                    'Конфигурация',
-                    'Мониторинг'
-                ],
-                datasets: [{
-                    label: 'CLI',
-                    data: [10, 10, 10, 10, 9, 10],
-                    backgroundColor: 'rgba(46, 204, 113, 0.2)',
-                    borderColor: colors.cli,
-                    borderWidth: 2,
-                    pointBackgroundColor: colors.cli
-                }, {
-                    label: 'GUI',
-                    data: [4, 3, 6, 5, 7, 8],
-                    backgroundColor: 'rgba(231, 76, 60, 0.2)',
-                    borderColor: colors.gui,
-                    borderWidth: 2,
-                    pointBackgroundColor: colors.gui
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top'
-                    }
-                },
-                scales: {
-                    r: {
-                        beginAtZero: true,
-                        max: 10,
-                        ticks: {
-                            stepSize: 2
-                        }
-                    }
-                }
+/* ---- 11. Automation (Radar) ---- */
+new Chart(document.getElementById('automationChart'), {
+    type: 'radar',
+    data: {
+        labels: ['Скриптинг', 'Планиране', 'Мониторинг', 'Деплой', 'Бекъп', 'Тестване'],
+        datasets: [
+            { label: 'CLI', data: [10, 9, 8, 9, 9, 8], borderColor: C.cli, backgroundColor: C.cliBg, pointBackgroundColor: C.cli, pointRadius: 4, borderWidth: 2 },
+            { label: 'GUI', data: [3, 5, 6, 4, 5, 5], borderColor: C.gui, backgroundColor: C.guiBg, pointBackgroundColor: C.gui, pointRadius: 4, borderWidth: 2 }
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+            r: {
+                beginAtZero: true, max: 10,
+                ticks: { stepSize: 2, backdropColor: 'transparent' },
+                grid: { color: C.grid },
+                angleLines: { color: C.grid },
+                pointLabels: { font: { size: 11 } }
             }
-        });
+        }
     }
-
-    // ========================================
-    // Animation Effect for Charts
-    // ========================================
-
-    const chartObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, {
-        threshold: 0.1
-    });
-
-    const allCharts = document.querySelectorAll('.chart-section');
-    allCharts.forEach(chart => {
-        chart.style.opacity = '0';
-        chart.style.transform = 'translateY(30px)';
-        chart.style.transition = 'all 0.6s ease';
-        chartObserver.observe(chart);
-    });
-
-    console.log('Charts loaded successfully! 📊');
 });
