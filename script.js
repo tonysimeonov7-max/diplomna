@@ -27,24 +27,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 });
 
 /* ===== Navbar scroll effect ===== */
-const navbar = document.querySelector('.navbar');
-if (navbar) {
-    window.addEventListener('scroll', () => {
-        navbar.style.boxShadow = window.scrollY > 30
-            ? '0 2px 12px rgba(0,0,0,0.2)'
-            : '0 2px 8px rgba(0,0,0,0.15)';
-    }, { passive: true });
-}
-
-/* ===== FAQ Accordion ===== */
-document.querySelectorAll('.faq-question').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const item = btn.parentElement;
-        const open = item.classList.contains('active');
-        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
-        if (!open) item.classList.add('active');
-    });
-});
 
 /* ===== Contact Form ===== */
 const contactForm = document.getElementById('contactForm');
